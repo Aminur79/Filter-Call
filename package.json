@@ -1,11 +1,5 @@
 {
-  "dependencies": {
-    "express": "^4.19.2",
-    "nodemon": "^3.1.4",
-    "type": "module"
-  },
-  "type": "module",
-  "name": "post-js",
+  "name": "nodejs",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -15,5 +9,13 @@
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "express-validator": "^7.1.0",
+    "nodemon": "^3.1.4",
+    "parser": "^0.1.4"
+  },
+  "type": "module"
 }

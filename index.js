@@ -1,9 +1,9 @@
 import express from "express";
+
 const app = express();
-app.use(express.json());
 const PORT = process.env.PORT || 5000;
 
-
+// mock data for users
 const mockUsers = [
     { id: 1, name: "Mino", age: "22", },
     { id: 2, name: "Amir", age: "16", },
@@ -30,37 +30,69 @@ const mockUsers = [
     { id: 23, name: "Adam", age: "27", },
     { id: 24, name: "Yatt", age: "30", },
     { id: 25, name: "Amir", age: "22", },
-
 ];
 
-
-
-app.get("/api/classname", (req, res) => {
-    console.log(req.query);
-
-    const {
-        query: { filter, value },
-    } = req;
-
-    if (!filter && !value) return res.send(mockUsers);
-
-    if (filter && value) {
-
-        const filteredUsers = mockUsers.filter((user) => user[filter].includes(value));
-
-        return res.send(filteredUsers);
-    }
+// Basic route
+app.get("/", (req, res) => {
+    res.status(200).send({ message: "Hello World" });
 });
 
+// Get all users with optional filtering
+//localhost:5000/api/users?filter=name&value=shi  (example find by string)
+app.get("/api/classname", (req, res) => {
+    console.log(req.query)
 
+    const { filter, value } = req.query
+    const validFilters = ["name", "age"]
 
+    if (filter && !validFilters.includes(filter)) {
+        return res.status(400).send({ msg: "Invalid filter parameter" });
+    }
+    if (!filter || !value) {
+        return res.status(200).send(mockUsers);
+    }
 
+    const filteredUsers = mockUsers.filter(user =>
+        user[filter] && user[filter].toLowerCase().includes(value.toLowerCase())
+    )
 
+    if (filteredUsers.length === 0) {
+        return res.status(404).send({ msg: "Invalid not found" });
+    }
 
+    res.status(200).send(filteredUsers);
+});
 
+// Get user by ID
+//localhost:5000/api/users/1 (example find by id)
 
+app.get("/api/classname/:id", (req, res) => {
+    console.log(req.params)
 
+    const parseId = parseInt(req.params.id, 10)
+    console.log(parseId)
 
+    if (isNaN(parseId)) {
+        return res.status(400).send({ msg: "Bad request. Invalid ID" })
+    }
+
+    const findUser = mockUsers.find(user => user.id === parseId)
+    if (!findUser) {
+        return res.status(404).send({ msg: "User not found" })
+    }
+
+    res.status(200).send(findUser);
+})
+
+// app.get("/api/products", (req, res) => {
+//     res.status(200).send([
+//         { id: 1, name: "iPhone", price: 1000, category: "Electronics" },
+//         { id: 2, name: "Laptop", price: 2000, category: "Electronics" },
+//         { id: 3, name: "Tablet", price: 3000, category: "Electronics" }
+//     ]);
+// });
+
+// Start server
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 })
